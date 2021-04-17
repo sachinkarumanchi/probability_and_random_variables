@@ -1,0 +1,224 @@
+\documentclass{beamer}
+\usepackage{listings}
+\lstset{
+%language=C,
+frame=single, 
+breaklines=true,
+columns=fullflexible
+}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{tkz-euclide} % loads  TikZ and tkz-base
+%\usetkzobj{all}
+\usetikzlibrary{calc,math}
+\usepackage{float}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\providecommand{\brak}[1]{\ensuremath{\left(#1\right)}}
+\providecommand{\abs}[1]{\vert#1\vert}
+\providecommand{\fourier}{\overset{\mathcal{F}}{ \rightleftharpoons}}
+\providecommand{\pr}[1]{\ensuremath{\Pr\left(#1\right)}}
+\providecommand{\sbrak}[1]{\ensuremath{{}\left[#1\right]}}
+\usepackage[export]{adjustbox}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usetheme{Boadilla}
+\title{GATE 2011(ME) Problem-19}
+\author{Sachin Karumanchi (IITH AI)}
+\date{AI20BTECH11013}
+\begin{document}
+%
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}{Question}
+    \begin{block}{GATE 2011(ME) Problem-19}
+    Cars arrive at a service station according to Poisson’s distribution with a mean rate of 5 per hour.The service time per car is exponential with a mean of 10 minutes.At a steady state,the average waiting time in the queue is
+    \begin{enumerate}
+        \item 10 min
+        \item 20 min
+        \item 25 min
+        \item 50 min
+    \end{enumerate}
+    \end{block}
+\end{frame}
+\begin{frame}{Queuing Theory}
+\begin{itemize}
+    \item Queuing theory is the mathematical study of waiting lines or queues.
+    \item In Queuing theory a model is constructed so that queue lengths and waiting times can be predicted.
+    \item A customer arrives into system for service and gets out of system after service.
+    \item Generally most of the arrival times follow poisson distributions and services follow exponential distributions.
+    \item These queuing models have since seen applications including telecommunications,traffic engineering, computing and the design of factories,shops,offices and hospitals. 
+\end{itemize}
+\end{frame}
+\begin{frame}{Parameters for measuring Queuing performance}
+\begin{block}{Parameters}
+\begin{itemize}
+    \item $\lambda$ = Average arrival time
+    \item $\mu$ = Average service time
+    \item $\rho$ = Utilization factor
+    \item $L_q$ = Average number in the queue
+    \item $L_s$ = Average number in the system
+    \item $W_q$ = Average waiting time
+    \item $W_s$ = Average time in the system
+    \item $P_n$ = Steady state probability of exactly n customers in the system
+\end{itemize}
+\end{block}
+\end{frame}
+\begin{frame}{Single server model}
+    \begin{itemize}
+        \item From the given question we can say that there is only one queue with no limit of cars in queue,so we can say that it is a single server model.
+        \item Single server model is represented as "\textbf{M/M/1/$\infty$/$\infty$/FIFO}" by kendall's notation (or) usually "\textbf{M/M/1}"
+        \item  Here '\textbf{M}' indicates the Markovian property (or) memory less property of the model first \textbf{M} is for arrival and second one for service and 1 is the number of servers in the model and '$\infty$' indicates the limit of the queue and second '$\infty$' represent population of jobs to be served and '\textbf{FIFO}' represents First-In First-Out service.
+        \item In cases where there is no limit in the queue we only take the cases where $\frac{\lambda}{\mu}<1$. Otherwise there could be customers who will not get their service.
+    \end{itemize}
+\end{frame}
+\begin{frame}{Deriving formulae}
+    \begin{itemize}
+    \item The memory less property allows us to assume that one event can take place in a small interval of time. The event could be either a arrival or a service.
+    \item  For the time interval($t,t+h$), where $h \to 0$
+\begin{align}
+    \Pr{(\text{1 arrival})}&=\lambda h\\
+    \Pr{(\text{1 service})}&=\mu h\\
+    \Pr{(\text{no arrival})}&=1-\lambda h\\
+    \Pr{(\text{no service})}&=1-\mu h
+\end{align}
+\item Probability of $n$ people at time $(t+h)$
+\begin{multline}
+    P_{n}(t+h)=P_{n-1}(t)\times\Pr{(\text{1 arrival})}\times\Pr{(\text{no service})}\\
+    +P_{n+1}(t)\times\Pr{(\text{no arrival})}\times\Pr{(\text{1 service})}\\
+    +P_n(t)\times\Pr{(\text{no arrival})}\times\Pr{(\text{no service})}\label{eq:eq1}
+\end{multline}
+    \end{itemize}
+\end{frame}
+\begin{frame}{contd}
+\begin{multline}
+    \implies P_{n}(t+h)=P_{n-1}(t)(\lambda h)(1-\mu h)+P_{n+1}(t)(\mu h)(1- \lambda h)\\
+    +P_n(t)(1-\lambda h)(1-\mu h)
+\end{multline}
+Now, Neglecting higher order terms of $h$.
+\begin{align}
+    \implies P_{n}(t+h)=P_{n-1}\lambda h+P_{n+1}\mu h
+    +P_n(t)(1-\lambda h-\mu h)\\
+    \implies \frac{P_n(t+h)-P_n(t)}{h}=P_{n-1}(t)\lambda+P_{n+1}(t)\mu
+    -P_n(t)(\lambda+\mu)
+\end{align}
+At steady state, $P_n(t+h)=P_n(t)$
+\begin{align}
+    \implies\lambda P_{n-1}+\mu P_{n+1}&=(\lambda+\mu)P_n\label{eq:res1}
+\end{align}
+\end{frame}
+\begin{frame}{contd}
+Now, calculating $P_0(t+h)$ using \eqref{eq:eq1}
+\begin{align}
+    P_0(t+h)=P_1(t)(1-\lambda h)(\mu h)
+    +P_0(t)(1-\lambda h)
+\end{align}
+Again, Neglecting higher order terms of $h$
+\begin{align}
+    \implies P_0(t+h)=P_1(t)(\mu h)+P_0(t)(1-\lambda h)
+    \end{align}
+    \begin{align}
+    \implies\frac{P_0(t+h)-P_0(t)}{h}&=P_1(\mu)-P_0(\lambda)
+\end{align}
+At steady state, $P_0(t+h)=P_0(t)$
+\begin{align}
+    \implies \mu P_1&=\lambda P_0\label{eq:eq2}\\
+    \implies P_1&=\brak{\frac{\lambda}{\mu}}P_0\label{eq:res2}
+\end{align}
+\end{frame}
+\begin{frame}{contd}
+Using \eqref{eq:res1} by substituting $n=1$
+\begin{align}
+    \lambda P_0+\mu P_2&=(\lambda+\mu)P_1\\
+    \implies \lambda P_0+\mu P_2&=\lambda P_1+\mu P_1
+\end{align}
+from \eqref{eq:eq2} and \eqref{eq:res2}
+\begin{align}
+    \implies\lambda P_0+\mu P_2&=\lambda P_1+\lambda P_0\\
+    \implies P_2&=\brak{\frac{\lambda}{\mu}}P_1\\
+    \implies P_2&=\brak{\frac{\lambda}{\mu}}^2P_0\label{eq:eq3}
+\end{align}
+We assume $\frac{\lambda}{\mu}=\rho$ and generalize $P_n$ by \eqref{eq:res2} and \eqref{eq:eq3}
+\begin{align}
+  P_n&=\brak{\frac{\lambda}{\mu}}^nP_0\\
+  \implies P_n&=\rho^nP_0\label{eq:res3}
+\end{align}
+\end{frame}
+\begin{frame}{contd}
+We know that sum of all probabilities equal to 1
+\begin{align}
+    \sum_{i=1}^{\infty}P_i&=1\\
+    \implies P_0+P_1+P_2+....&=1
+\end{align}
+Using \eqref{eq:res3}
+\begin{align}
+    \implies P_0+\rho P_0+\rho^2P_0+....&=1\\
+    \implies P_0\brak{1+\rho+\rho^2+...}&=1\\
+    \implies P_0\brak{\frac{1}{1-\rho}}&=1\\
+    \implies P_0&=1-\rho\label{eq:res4}\\
+    \therefore P_n=\rho^n(1-\rho)
+\end{align}
+\end{frame}
+\begin{frame}{Contd}
+The number of people in the system ($L_s$) is the expected value
+\begin{align}
+    L_s&=\sum_{i=0}^{\infty}iP_i\\
+    \implies L_s&=\sum_{i=0}^{\infty}i\rho^iP_0=\rho P_0\sum_{i=0}^{\infty}i\rho^{i-1}\\
+    \implies L_s&=\rho P_0\sum_{i=0}^{\infty}\frac{d}{d\rho}\brak{\rho^i}\\
+    \implies L_s&=\rho P_0\frac{d}{d\rho}\sum_{i=0}^{\infty}\rho^i\\
+    \implies L_s&=\rho P_0\frac{d}{d\rho}\brak{\frac{1}{1-\rho}}\\
+    \implies L_s&=\rho P_0\frac{1}{(1-\rho)^2}
+\end{align}
+\end{frame}
+\begin{frame}{contd}
+By using \eqref{eq:res4}
+\begin{align}
+    \implies L_s&=\rho(1-\rho)\frac{1}{(1-\rho)^2}\\
+    \implies L_s&=\frac{\rho}{1-\rho}=\frac{\lambda}{\mu-\lambda}
+\end{align}
+The average number of people beign served is $\rho$
+\begin{align}
+    \therefore L_s&=L_q+\text{avg no.of people beign served}\\
+    \implies L_s&=L_q+\rho\\
+    \implies L_q&=L_s-\rho\\
+    \implies L_q&=\frac{\rho}{1-\rho}-\rho\\
+    \implies L_q&=\frac{\rho^2}{1-\rho}=\frac{\lambda^2}{\mu(\mu-\lambda)}
+\end{align}
+\end{frame}
+\begin{frame}{contd}
+    The relation between $L_s$,$W_s$ and $L_q$,$W_q$ are the Little's equation and they are related as
+\begin{align}
+    W_s&=\frac{L_s}{\lambda}=\frac{1}{\mu-\lambda}\\
+    W_q&=\frac{L_q}{\lambda}=\frac{\lambda}{\mu(\mu-\lambda)}
+\end{align}
+\begin{block}{Results}
+\begin{itemize}
+    \item $\rho=\frac{\lambda}{\mu}$
+    \item $L_s=\frac{\lambda}{\mu-\lambda}$
+    \item $L_q=\frac{\lambda^2}{\mu(\mu-\lambda)}$
+    \item $W_s=\frac{1}{\mu-\lambda}$
+    \item $W_q=\frac{\lambda}{\mu(\mu-\lambda)}$
+\end{itemize}
+\end{block}
+\end{frame}
+\begin{frame}{Solution}
+From the question given,
+\begin{align*}
+    \lambda &=5\text{hr}^{-1}\\
+    \mu&=\frac{1}{10}\text{min}^{-1} =6\text{hr}^{-1}
+    \end{align*}
+also $\rho=\frac{\lambda}{\mu}=\frac{5}{6}<1$\\
+Therefore, the average waiting time in the queue 
+\begin{align*}
+    W_q&=\frac{\lambda}{\mu(\mu-\lambda)}\\
+    &=\frac{5}{6(6-5)}\\
+    &=\frac{5}{6}\text{hr}=50\text{min}
+\end{align*}
+So,\textbf{option 4} is correct.
+\end{frame}
+\end{document}
