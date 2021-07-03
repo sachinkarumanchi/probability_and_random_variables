@@ -1,0 +1,205 @@
+\documentclass{beamer}
+\usepackage{listings}
+\lstset{
+%language=C,
+frame=single, 
+breaklines=true,
+columns=fullflexible
+}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{tkz-euclide} % loads  TikZ and tkz-base
+%\usetkzobj{all}
+\usetikzlibrary{calc,math}
+\usepackage{float}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\providecommand{\brak}[1]{\ensuremath{\left(#1\right)}}
+\providecommand{\abs}[1]{\vert#1\vert}
+\providecommand{\fourier}{\overset{\mathcal{F}}{ \rightleftharpoons}}
+\providecommand{\pr}[1]{\ensuremath{\Pr\left(#1\right)}}
+\providecommand{\sbrak}[1]{\ensuremath{{}\left[#1\right]}}
+\usepackage[export]{adjustbox}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usetheme{Boadilla}
+\title{OQAM based Bi-orthogonal 5G System for IoT Device Communications}
+\author{Sachin Karumanchi (IITH AI)}
+\date{AI20BTECH11013}
+\begin{document}
+%
+\begin{frame}
+\titlepage
+\end{frame}
+\begin{frame}{Why do we need new system for IoT device communication?}
+    \begin{itemize}
+        \item 5G Research is driven by the Machine-to-Machine (M2M) communication, ubiquitous broadband connectivity, and the tactile internet.\
+        \item These IoT devices communication generates heavy random traffic and mainly inactive for longer duration.
+        \item The network of these devices also need a periodic internet access for trivial incremental updates. 
+        \item  Hundreds of interconnected IoT devices will be a norm and handling such an exponential growth of sporadic traffic with the existing LTE random access procedures is a herculean task. 
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    \begin{block}{Prequesites}
+    \begin{itemize}
+        \item \textbf{PRACH}: The Physical Random Access Channel (PRACH) is used by a uplink user to initiate contact with a base station. 
+        \item \textbf{PUSCH}: The Primary Uplink Shared Channel (PUSCH) is used by uplink users to transmit data to the base station.
+        \item \textbf{BFDM}:Biorthogonal Frequency Division Multiplex scheme is used to transmit data over a radio wave.
+        \item \textbf{OQAM}:Offset quadrature amplitude modulation (offset-QAM) is a group of modulation formats where the imaginary part of the complex symbol is transmitted with half symbol delay. 
+    \end{itemize}
+    \end{block}
+\end{frame}
+\begin{frame}{How does OQAM based Bi-orthogonal system can achieve requirements of IoT devices}
+\begin{itemize}
+    \item Here we use a improved physical access random channel(PRACH) called Data-PRACH to handle the traffic and accomplish simultaneous device synchronization.
+    \item D-PRACH uses the guard band between PUSCH.By doing so, asynchronous bursty traffic is left out from the uplink shared channel PUSCH and signaling overhead is been drastically reduced, which translates in to reasonably good power saving for the IoT devices.
+    \item BFDM with OQAM shows greater robustness to Doppler shifts of the signal due to the channel environment,when compared to conventional OFDM systems
+    \item The transmission of PRACH symbols in BFDM system is highly resistant to timing offsets and is much suitable for asynchronous sporadic data transmission.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Design of BFDM system}
+    \begin{itemize}
+        \item The transmitted symbols are as per a group of time and frequency shifted pulses with the lattice points ($kT,lF$), where T and F are time domain and frequency domain shifts respectively.
+        \item  Precise symbol reconstruction can be achieved only if the transmit pulses ($g_{k;l}$) and the receive pulses ($\gamma_{k;l}$) form the bi-orthogonal Riesz bases.
+        \item Pluse properties and time frequency prodct are also important in perfect symbol reconstruction, Product of symbol duration ($T$) and subcarrier spacing frequency ($F$), $TF=1.25$ is found to be optimum.
+    \end{itemize}
+\end{frame}
+\begin{frame}{BFDM Transmitter}
+      \begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{BFDM transmitter.png}
+    \label{BFDM transmitter}
+    \begin{itemize}
+        \item Shaping of signal is done by pulse 'g' based on B-Spline mainly due to it's excellent tailing properties.
+        \item After sub-carrier mapping of data, IFFT is applied, then  stacked as a row matrix, then convoluted with the time shifted pulse ‘g’ and laid over by overlapping and adding to get the pulse shaped PRACH signal.  
+    \end{itemize}
+\end{figure}
+\end{frame}
+\begin{frame}{contd}
+\begin{itemize}
+    \item Take the length of pulse 'g' as P.
+    \item After IFFT it generates K symbols each of length P and each $t_k[n]$ is stacked as a row matrix.\\
+    \begin{equation*}T = \left( \begin{array}{c} {{t_0}[n]} \\ {{t_1}[n]} \\ \vdots \\ {{t_{K - 1[n]}}} \end{array} \right),{\text{S}} \in {\mathbb{C}^{KxP}}\tag{1}\end{equation*}
+    \item Each $t_k[n]$ is point wise multiplied with the shifted pulse 'g' and superimposed by overlap and add, the transmitted signal would be\\
+    \begin{equation*}t_{pr}^{ps}[n] = \sum\nolimits_{k = 0}^{K - 1} {{t_k}[n]g[n - kN]} \tag{2}\end{equation*}
+\end{itemize}
+\end{frame}
+\begin{frame}{BFDM Receiver}
+ \begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{BFDM receiver.png}
+    \label{BFDM Reciver}
+    \end{figure}
+    \begin{itemize}
+    \item The received signal is stacked and convoluted with pulse $\gamma$ which is a canonical dual (bi-orthogonal) of the transmitted pulse ‘g’.
+        
+    \end{itemize}
+\end{frame}
+\begin{frame}{contd}
+\begin{itemize}
+    \item The received signal $o_{PR}[n]$ is arranged in a row matrix.\\
+        \begin{equation*}{\text{O}} = \left( \begin{array}{c} {{o_0}[n]} \\ {{o_1}[n]} \\ \vdots \\ {o[n]} \end{array} \right),{\text{R}} \in {\mathbb{C}^{KxP}}\tag{3}\end{equation*}
+    \item Then each row is multiplied point wise by the shifted bi-orthogonal pulse $\gamma$, so the received signal is\\
+    \begin{equation*}o_k^\gamma [n] = {o_k}[n]\gamma [n-kN]\tag{4}\end{equation*}
+    \item After FFT is applied on received output and sub carrier demapping is done to get the output data at the BFDM receiver.
+\end{itemize}
+\end{frame}
+\begin{frame}{Offset-QAM modulation}
+\begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{OQAM constillation diagram.png}
+    \label{BFDM Reciver}
+    \end{figure}
+    \begin{itemize}
+        \item In the Offset QAM, real and imaginary parts of a complex data symbol are not transmitted simultaneously. The imaginary part of the complex symbol is transmitted with a half symbol delay.
+        \item  OQAM based BFDM significantly improve time-frequency localization compared to OQAM based OFDM system.
+    \end{itemize}
+\end{frame}
+\begin{frame}{Simulations}
+\begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{BFDM tranciever.png}
+    \label{BFDM Reciver}
+    \caption{BFDM Transceiver block diagram}
+    \end{figure}
+\begin{itemize}
+    \item The source data is encoded by using channel coding techniques.
+    \item  Using a BFDM modulator converted to a BFDM signal for transmission through a channel and using BFDM demodulator demodulates the received BFDM signal.
+\end{itemize}
+\end{frame}
+\begin{frame}{Channel modelling}
+\begin{itemize}
+    \item Channel modeling considers along with noise, fading of signal due to multi path is an important component.
+    \item Over longer distances of signal travel, the degradation of the transmitted signal is known as fading.
+    \item In general, fading channels are of two types: Non-Line of Sight (NLOS) and Line of Sight (LOS) and are modeled by Rayleigh distribution and Rician distribution respectively.
+    \item Here, Rician distribution is used, since the MTC is mostly Line of Sight communication.
+\end{itemize}
+\end{frame}
+\begin{frame}{Rican Distribution}
+    \begin{block}{Rician function}
+          Rician distribution is the probability distribution of the magnitude of a circularly-symmetric bivariate normal random variable, possibly with non-zero mean (noncentral).\\
+        \begin{equation*}
+            f(x|v,\sigma)=\frac{x}{\sigma^2}exp\left(\frac{-(x^2+v^2)}{2\sigma^2}\right)I_0\left(\frac{xv}{\sigma^2}\right)
+        \end{equation*}
+        $I_0(z)$ is the modified Bessel function of first kind with order zero. 
+    \end{block}
+    \begin{block}{Rician fading}
+    \begin{itemize}
+        \item Shape Parameter $K=\frac{v^2}{2\sigma^2}$ is ratio of the power contributions by line-of-sight path to the remaining multipaths.
+        \item Scale Parameter $\Omega=v^2+2\sigma^2$ is Power received in all paths.
+    \end{itemize}
+    \end{block}
+\end{frame}
+\begin{frame}{Multipath Fading}
+   \begin{itemize}
+       \item  Signal propagates through a channel and reaches the receiver, from multiple paths apart from the direct path due to reflections, scattering and diffraction.
+       \item Multipath path fading channels based on Line of sight(LOS) conditions relevenat to IoT devices are \\
+       Rural Line Of Sight(RLOS) \\
+       Urban Approaching Line Of Sight (UALOS) \\
+       Highway Line Of Sight (HLOS) \\
+       \item These These fading profiles are the representation of low, medium, and high delay spreads respectively.
+   \end{itemize}
+\end{frame}
+\begin{frame}{LOS Profiles}
+\begin{figure}[ht]
+    \includegraphics[width=0.5\textwidth]{imgonline-com-ua-twotoone-E6tSGsXxoKX.jpg}
+    \label{LOS Profiles}
+    \end{figure}
+\end{frame}
+\begin{frame}{Simulation Parameters}
+    \begin{figure}[ht]
+    \includegraphics[width=0.5\textwidth]{Simulation Parameters.png}
+    \label{Simulation Parameters}
+    \caption{Parameters used in simulations between OFDM and BFDM systems}
+    \end{figure}
+\end{frame}
+\begin{frame}{Simulation Results}
+\begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{PSD diagram.png}
+    \label{PSD diagram}
+    \caption{BFDM and OFDM Power spectral density simulation}
+    \end{figure}
+\end{frame}
+\begin{frame}{Simulation Results}
+    \begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{RLOS fading.png}
+    \label{RLOS fading simulation}
+    \caption{ SER analysis for BFDM, BFDM-OQAM and OFDM systems under RLOS fading conditions}
+    \end{figure}
+\end{frame}
+\begin{frame}{Simulation Results}
+ \begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{HLOS fading.png}
+    \label{HLOS fading simulation}
+    \caption{ SER analysis for BFDM, BFDM-OQAM and OFDM systems under HLOS fading conditions}
+    \end{figure}
+\end{frame}
+\begin{frame}{Simulation Results}
+     \begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{UALOS fading.png}
+    \label{UALOS fading simulation}
+    \caption{ SER analysis for BFDM, BFDM-OQAM and OFDM systems under UALOS fading conditions}
+    \end{figure}
+\end{frame}
+\end{document}
